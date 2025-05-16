@@ -29,3 +29,16 @@ jobs:
       run: |
         cd MLProject
         mlflow run . --env-manager=local
+
+    - name: Copy artefak model ke folder simpan
+      run: |
+        mkdir -p saved_models
+        cp MLProject/model_rf.pkl saved_models/
+
+    - name: Commit artefak ke GitHub
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add saved_models/model_rf.pkl || true
+        git diff --cached --quiet || git commit -m "Add retrained model artefact"
+        git push
