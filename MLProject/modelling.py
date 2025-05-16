@@ -10,9 +10,6 @@ y_train = np.load('dataset_preprocessing/y_train.npy')
 X_val = np.load('dataset_preprocessing/x_val.npy')
 y_val = np.load('dataset_preprocessing/y_val.npy')
 
-# Set experiment
-mlflow.set_experiment("Modelling_Muhammad-Dila")
-
 # Training dan Logging
 with mlflow.start_run():
     model = RandomForestRegressor(n_estimators=100, random_state=42)
