@@ -36,9 +36,13 @@ jobs:
         cp MLProject/model_rf.pkl saved_models/
 
     - name: Commit artefak ke GitHub
+      env:
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
         git add saved_models/model_rf.pkl || true
         git diff --cached --quiet || git commit -m "Add retrained model artefact"
-        git push
+
+        git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
+        git push origin HEAD:${{ github.ref_name }}
