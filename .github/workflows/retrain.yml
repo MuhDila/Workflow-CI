@@ -30,19 +30,27 @@ jobs:
         cd MLProject
         mlflow run . --env-manager=local
 
+    - name: Install Git LFS
+      run: |
+        sudo apt-get update && sudo apt-get install -y git-lfs
+        git lfs install
+
     - name: Copy artefak model ke folder simpan
       run: |
         mkdir -p saved_models
         cp MLProject/model_rf.pkl saved_models/
 
-    - name: Commit artefak ke GitHub
+    - name: Commit artefak ke GitHub (via LFS)
       env:
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
+
+        git lfs track "saved_models/model_rf.pkl"
+        git add .gitattributes
         git add saved_models/model_rf.pkl || true
-        git diff --cached --quiet || git commit -m "Add retrained model artefact"
+        git diff --cached --quiet || git commit -m "Add retrained model artefact (LFS)"
 
         git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
         git push origin HEAD:${{ github.ref_name }}
